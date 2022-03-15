@@ -150,14 +150,34 @@
 
 				}
 
-				const geometry = BufferGeometryUtils.mergeBufferGeometries( geometries );
-				geometry.computeBoundingSphere();
+				const materials = [];
 
-				const texture = new THREE.TextureLoader().load( 'textures/minecraft/atlas.png' );
-				texture.magFilter = THREE.NearestFilter;
+				const numberOfMats = 4;
+				for ( let g = 0; g < numberOfMats; g ++ ) {
+		
+					const texture = new THREE.TextureLoader().load( "textures/Memes/image (" + (g+1).toString() + ").webp" );
+					const material = new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide } )
 
-				const mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide } ) );
-				scene.add( mesh );
+					materials.push(material);
+					const subMeshLength = geometries.length/numberOfMats;
+
+					const subMeshes = [];
+
+					for(let m = 0; m < subMeshLength; m ++)
+					{
+						subMeshes.push(geometries[m + (subMeshLength * g)])
+					}
+
+					const geometry = BufferGeometryUtils.mergeBufferGeometries( subMeshes );
+					geometry.computeBoundingSphere();
+					const mesh = new THREE.Mesh( geometry, materials[g]);
+					scene.add( mesh );
+
+				}
+
+	
+
+		
 
 				const ambientLight = new THREE.AmbientLight( 0xcccccc );
 				scene.add( ambientLight );
